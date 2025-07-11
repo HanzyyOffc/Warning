@@ -25,7 +25,7 @@
       padding: 2rem;
       border-radius: 20px;
       box-shadow: 0 0 20px rgba(255,255,255,0.1);
-      animation: fadeIn 1s ease-in-out;
+      animation: fadeIn 0.8s ease-in-out;
     }
     h2, h3, h4 {
       margin-bottom: 1rem;
@@ -87,17 +87,6 @@
     .btn-item:hover .btn-delete {
       display: block;
     }
-    #loader {
-      position: fixed;
-      width: 100%; height: 100%;
-      background: #000;
-      color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 2rem;
-      z-index: 99;
-    }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
@@ -107,8 +96,6 @@
 <body>
 
 <canvas id="particle-canvas"></canvas>
-
-<div id="loader">Memuat...</div>
 
 <div class="container" id="login-page">
   <h2>Login User</h2>
@@ -146,23 +133,17 @@ const defaultButtons = [
   { name: "Simpanan B", content: "Isi Simpanan B dari Owner" },
   { name: "Simpanan C", content: "Isi Simpanan C dari Owner" }
 ];
-const adminPassword = "hanzy";
+const adminPassword = "hanzyyxy01";
 let isAdmin = false;
 
 function loginUser() {
   const uname = document.getElementById("username").value.trim();
   if (!uname) return alert("Masukkan Username!");
   localStorage.setItem("username", uname);
-  showLoader();
-  setTimeout(showDashboard, 1200);
-}
-
-function showLoader() {
-  document.getElementById("loader").style.display = "flex";
+  showDashboard();
 }
 
 function showDashboard() {
-  document.getElementById("loader").style.display = "none";
   document.getElementById("login-page").style.display = "none";
   document.getElementById("dashboard").style.display = "block";
   document.getElementById("user-greet").textContent = localStorage.getItem("username");
@@ -237,7 +218,6 @@ function deleteSimpanan(index) {
   showDashboard();
 }
 
-// Auto login user/admin session
 window.onload = () => {
   if (localStorage.getItem("username")) {
     if (sessionStorage.getItem("admin") === "true") isAdmin = true;
