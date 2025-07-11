@@ -116,10 +116,11 @@
     <button onclick="adminLogin()">Login Admin</button>
 
     <div id="admin-controls" style="display:none;">
-      <h4>Tambah/Edit Simpanan</h4>
-      <input type="text" id="new-button-name" placeholder="Nama Button"/>
-      <textarea id="new-file-content" placeholder="Isi Simpanan (teks)"></textarea>
-      <button onclick="addNewSimpanan()">Simpan / Tambahkan</button>
+      <h4>Tambah / Edit Simpanan</h4>
+      <input type="text" id="new-button-name" placeholder="Nama Simpanan"/>
+      <textarea id="new-file-content" placeholder="Isi Simpanan"></textarea>
+      <input type="password" id="new-button-pin" placeholder="PIN Simpanan"/>
+      <button onclick="addNewSimpanan()">Simpan Simpanan</button>
     </div>
   </div>
 </div>
@@ -129,9 +130,10 @@
 
 <script>
 const defaultButtons = [
-  { name: "Owner Web", content: "Buat Web Kaya Gini? Sung saja dm t.me/XyHanzyy" },
+  { name: "Buy Web", content: "Langsung saja dm https://t.me/XyHanzyy", pin: "1234" }
 ];
-const adminPassword = "hanzyyxy01";
+const adminPassword = "hanzy101";
+const adminPIN = "9191";
 let isAdmin = false;
 
 function loginUser() {
@@ -158,7 +160,20 @@ function showDashboard() {
     b.textContent = btn.name;
     b.onclick = () => {
       document.getElementById("clickSound").play();
-      showFile(btn.content);
+      if (isAdmin) {
+        // Auto-isi form edit untuk admin
+        document.getElementById("new-button-name").value = btn.name;
+        document.getElementById("new-file-content").value = btn.content;
+        document.getElementById("new-button-pin").value = btn.pin;
+        alert("📌 Data dimuat untuk diedit");
+      } else {
+        const inputPIN = prompt(`Masukkan PIN untuk "${btn.name}"`);
+        if (inputPIN === btn.pin) {
+          showFile(btn.content);
+        } else {
+          alert("PIN salah!");
+        }
+      }
     };
     wrap.appendChild(b);
 
@@ -182,30 +197,42 @@ function showFile(content) {
 
 function adminLogin() {
   const inputPass = document.getElementById("admin-pass").value;
-  if (inputPass === adminPassword) {
+  const inputPIN = prompt("Masukkan PIN Admin:");
+  if (inputPass === adminPassword && inputPIN === adminPIN) {
     isAdmin = true;
     sessionStorage.setItem("admin", "true");
     document.getElementById("admin-controls").style.display = "block";
-    alert("Admin berhasil login!");
+    alert("✅ Admin berhasil login!");
     showDashboard();
   } else {
-    alert("Password salah!");
+    alert("❌ Password atau PIN salah!");
   }
 }
 
 function addNewSimpanan() {
   const name = document.getElementById("new-button-name").value.trim();
   const content = document.getElementById("new-file-content").value.trim();
-  if (!name || !content) return alert("Isi semua field!");
+  const pin = document.getElementById("new-button-pin").value.trim();
+
+  if (!name || !content || !pin) return alert("Semua field wajib diisi!");
 
   let buttons = JSON.parse(localStorage.getItem("simpananButtons")) || defaultButtons;
   const existing = buttons.find(b => b.name === name);
-  if (existing) existing.content = content;
-  else buttons.push({ name, content });
+  if (existing) {
+    existing.content = content;
+    existing.pin = pin;
+  } else {
+    buttons.push({ name, content, pin });
+  }
 
   localStorage.setItem("simpananButtons", JSON.stringify(buttons));
-  alert("Simpanan disimpan!");
+  alert("✅ Simpanan disimpan!");
   showDashboard();
+
+  // Kosongkan field
+  document.getElementById("new-button-name").value = "";
+  document.getElementById("new-file-content").value = "";
+  document.getElementById("new-button-pin").value = "";
 }
 
 function deleteSimpanan(index) {
@@ -223,7 +250,7 @@ window.onload = () => {
   }
 };
 
-// Background Partikel
+// Partikel animasi
 const canvas = document.getElementById("particle-canvas");
 const ctx = canvas.getContext("2d");
 let particles = [];
