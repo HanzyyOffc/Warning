@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dashboard Simpanan</title>
+  <title>Functions Free - Hanzyy</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
   <style>
     * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
@@ -135,7 +135,7 @@ const defaultButtons = [
   { name: "Simpanan C", content: "Isi Simpanan C dari Owner", pin: "1234" }
 ];
 const adminPassword = "hanzy";
-const adminPIN = "167";
+const adminPIN = "56";
 let isAdmin = false;
 
 function loginUser() {
@@ -178,207 +178,6 @@ function showDashboard() {
       }
     };
     wrap.appendChild(b);
-
-    if (isAdmin) {
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dashboard Simpanan</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
-  <style>
-    * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-    body {
-      margin: 0;
-      background: #0f0f0f;
-      color: #fff;
-      overflow: hidden;
-    }
-    canvas {
-      position: fixed;
-      top: 0; left: 0;
-      z-index: -1;
-    }
-    .container {
-      width: 90%; max-width: 500px;
-      margin: 5% auto;
-      background: #1e1e1e;
-      padding: 2rem;
-      border-radius: 20px;
-      box-shadow: 0 0 20px rgba(255,255,255,0.1);
-      animation: fadeIn 0.8s ease-in-out;
-    }
-    h2, h3, h4 {
-      margin-bottom: 1rem;
-      text-align: center;
-    }
-    input, button, textarea {
-      width: 100%; padding: 0.75rem;
-      margin: 0.5rem 0;
-      border: none; border-radius: 12px;
-      background: #2d2d2d; color: white;
-      font-size: 1rem;
-    }
-    button {
-      background: #ffffff; color: black;
-      font-weight: bold; cursor: pointer;
-      transition: 0.3s;
-    }
-    button:hover {
-      background: #00ffe0;
-      transform: scale(1.02);
-    }
-    .dashboard { display: none; }
-    .file-display {
-      white-space: pre-wrap;
-      background: #292929;
-      padding: 1rem;
-      border-radius: 10px;
-      margin-top: 0.5rem;
-      color: #d2ffd2;
-    }
-    .admin-panel {
-      background: #111;
-      padding: 1rem;
-      border-radius: 10px;
-      margin-top: 2rem;
-    }
-    .button-wrapper {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      margin-top: 1rem;
-    }
-    .btn-item {
-      position: relative;
-    }
-    .btn-delete {
-      position: absolute;
-      top: 5px;
-      right: 10px;
-      background: red;
-      border-radius: 50%;
-      color: white;
-      font-size: 0.8rem;
-      width: 24px;
-      height: 24px;
-      border: none;
-      display: none;
-    }
-    .btn-item:hover .btn-delete {
-      display: block;
-    }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-  </style>
-</head>
-<body>
-
-<canvas id="particle-canvas"></canvas>
-
-<div class="container" id="login-page">
-  <h2>Login User</h2>
-  <input type="text" id="username" placeholder="Masukkan Username" />
-  <button onclick="loginUser()">Masuk</button>
-</div>
-
-<div class="container dashboard" id="dashboard">
-  <h2>Selamat datang, <span id="user-greet"></span> 👋</h2>
-  
-  <div class="button-wrapper" id="button-list"></div>
-
-  <div class="file-display" id="file-content" style="display:none;"></div>
-
-  <div class="admin-panel">
-    <h3>Login Admin</h3>
-    <input type="password" id="admin-pass" placeholder="Password Admin"/>
-    <button onclick="adminLogin()">Login Admin</button>
-
-    <div id="admin-controls" style="display:none;">
-      <h4>Tambah / Edit Simpanan</h4>
-      <input type="text" id="new-button-name" placeholder="Nama Simpanan"/>
-      <textarea id="new-file-content" placeholder="Isi Simpanan"></textarea>
-      <input type="password" id="new-button-pin" placeholder="PIN (Opsional)"/>
-      <button onclick="addNewSimpanan()">Simpan Simpanan</button>
-    </div>
-  </div>
-</div>
-
-<audio id="clickSound" src="https://www.myinstants.com/media/sounds/mouse-click.mp3"></audio>
-<audio id="welcomeSound" src="https://www.myinstants.com/media/sounds/startup-sound.mp3" autoplay></audio>
-
-<script>
-const defaultButtons = [
-  { name: "Simpanan A", content: "Isi Simpanan A dari Owner", pin: "1234" },
-  { name: "Simpanan B", content: "Isi Simpanan B dari Owner", pin: "" },
-  { name: "Simpanan C", content: "Isi Simpanan C dari Owner", pin: "1234" }
-];
-const adminPassword = "hanzy";
-const adminPIN = "65";
-let isAdmin = false;
-
-function loginUser() {
-  const uname = document.getElementById("username").value.trim();
-  if (!uname) return alert("Masukkan Username!");
-  localStorage.setItem("username", uname);
-  showDashboard();
-}
-
-function showDashboard() {
-  document.getElementById("login-page").style.display = "none";
-  document.getElementById("dashboard").style.display = "block";
-  document.getElementById("user-greet").textContent = localStorage.getItem("username");
-
-  let buttons = JSON.parse(localStorage.getItem("simpananButtons")) || defaultButtons;
-  const btnList = document.getElementById("button-list");
-  btnList.innerHTML = "";
-
-  buttons.forEach((btn, index) => {
-    const wrap = document.createElement("div");
-    wrap.className = "btn-item";
-
-    const b = document.createElement("button");
-    b.textContent = btn.name;
-    b.onclick = () => {
-      document.getElementById("clickSound").play();
-      if (isAdmin) {
-        document.getElementById("new-button-name").value = btn.name;
-        document.getElementById("new-file-content").value = btn.content;
-        document.getElementById("new-button-pin").value = btn.pin || "";
-        alert("📌 Data dimuat untuk diedit");
-      } else {
-        if (btn.pin && btn.pin.trim() !== "") {
-          const inputPIN = prompt(`Masukkan PIN untuk "${btn.name}"`);
-          if (inputPIN === btn.pin) showFile(btn.content);
-          else alert("PIN salah!");
-        } else {
-          showFile(btn.content);
-        }
-      }
-    };
-    wrap.appendChild(b);
-
-    // Tombol copy text
-    const copyBtn = document.createElement("button");
-    copyBtn.textContent = "📋 Copy Text";
-    copyBtn.style.marginTop = "5px";
-    copyBtn.style.background = "#333";
-    copyBtn.style.color = "#fff";
-    copyBtn.style.fontSize = "0.9rem";
-
-    copyBtn.onclick = () => {
-      if (isAdmin || !btn.pin || btn.pin === "") {
-        navigator.clipboard.writeText(btn.content).then(() => {
-          alert("\u2705 Teks disalin!");
-        });
-      } else {
-        alert("\u274C Tidak bisa disalin! Harus buka dengan PIN.");
-      }
-    };
-    wrap.appendChild(copyBtn);
 
     if (isAdmin) {
       const del = document.createElement("button");
@@ -405,17 +204,17 @@ function adminLogin() {
     isAdmin = true;
     sessionStorage.setItem("admin", "true");
     document.getElementById("admin-controls").style.display = "block";
-    alert("\u2705 Admin berhasil login!");
+    alert("✅ Admin berhasil login!");
     showDashboard();
   } else {
-    alert("\u274C Password atau PIN salah!");
+    alert("❌ Password atau PIN salah!");
   }
 }
 
 function addNewSimpanan() {
   const name = document.getElementById("new-button-name").value.trim();
   const content = document.getElementById("new-file-content").value.trim();
-  const pin = document.getElementById("new-button-pin").value.trim();
+  const pin = document.getElementById("new-button-pin").value.trim(); // bisa kosong
 
   if (!name || !content) return alert("Nama dan isi wajib diisi!");
 
@@ -429,9 +228,10 @@ function addNewSimpanan() {
   }
 
   localStorage.setItem("simpananButtons", JSON.stringify(buttons));
-  alert("\u2705 Simpanan disimpan!");
+  alert("✅ Simpanan disimpan!");
   showDashboard();
 
+  // Kosongkan field
   document.getElementById("new-button-name").value = "";
   document.getElementById("new-file-content").value = "";
   document.getElementById("new-button-pin").value = "";
@@ -452,9 +252,11 @@ window.onload = () => {
   }
 };
 
+// Animasi partikel bintang
 const canvas = document.getElementById("particle-canvas");
 const ctx = canvas.getContext("2d");
 let particles = [];
+
 function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
@@ -473,6 +275,7 @@ function createParticles() {
   }
 }
 createParticles();
+
 function animateParticles() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.fillStyle = "#ffffff22";
