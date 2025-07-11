@@ -119,7 +119,7 @@
       <h4>Tambah / Edit Simpanan</h4>
       <input type="text" id="new-button-name" placeholder="Nama Simpanan"/>
       <textarea id="new-file-content" placeholder="Isi Simpanan"></textarea>
-      <input type="password" id="new-button-pin" placeholder="PIN Simpanan"/>
+      <input type="password" id="new-button-pin" placeholder="PIN (Opsional)"/>
       <button onclick="addNewSimpanan()">Simpan Simpanan</button>
     </div>
   </div>
@@ -130,10 +130,12 @@
 
 <script>
 const defaultButtons = [
-  { name: "Buy Web", content: "Langsung saja dm https://t.me/XyHanzyy" }
+  { name: "Simpanan A", content: "Isi Simpanan A dari Owner", pin: "1234" },
+  { name: "Simpanan B", content: "Isi Simpanan B dari Owner", pin: "" },
+  { name: "Simpanan C", content: "Isi Simpanan C dari Owner", pin: "1234" }
 ];
-const adminPassword = "hanzy101";
-const adminPIN = "9191";
+const adminPassword = "hanzy";
+const adminPIN = "167";
 let isAdmin = false;
 
 function loginUser() {
@@ -161,17 +163,17 @@ function showDashboard() {
     b.onclick = () => {
       document.getElementById("clickSound").play();
       if (isAdmin) {
-        // Auto-isi form edit untuk admin
         document.getElementById("new-button-name").value = btn.name;
         document.getElementById("new-file-content").value = btn.content;
-        document.getElementById("new-button-pin").value = btn.pin;
+        document.getElementById("new-button-pin").value = btn.pin || "";
         alert("📌 Data dimuat untuk diedit");
       } else {
-        const inputPIN = prompt(`Masukkan PIN untuk "${btn.name}"`);
-        if (inputPIN === btn.pin) {
-          showFile(btn.content);
+        if (btn.pin && btn.pin.trim() !== "") {
+          const inputPIN = prompt(`Masukkan PIN untuk "${btn.name}"`);
+          if (inputPIN === btn.pin) showFile(btn.content);
+          else alert("PIN salah!");
         } else {
-          alert("PIN salah!");
+          showFile(btn.content);
         }
       }
     };
@@ -212,9 +214,9 @@ function adminLogin() {
 function addNewSimpanan() {
   const name = document.getElementById("new-button-name").value.trim();
   const content = document.getElementById("new-file-content").value.trim();
-  const pin = document.getElementById("new-button-pin").value.trim();
+  const pin = document.getElementById("new-button-pin").value.trim(); // bisa kosong
 
-  if (!name || !content || !pin) return alert("Semua field wajib diisi!");
+  if (!name || !content) return alert("Nama dan isi wajib diisi!");
 
   let buttons = JSON.parse(localStorage.getItem("simpananButtons")) || defaultButtons;
   const existing = buttons.find(b => b.name === name);
@@ -250,7 +252,7 @@ window.onload = () => {
   }
 };
 
-// Partikel animasi
+// Animasi partikel bintang
 const canvas = document.getElementById("particle-canvas");
 const ctx = canvas.getContext("2d");
 let particles = [];
