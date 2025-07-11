@@ -3,161 +3,170 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Data Pribadi</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <title>Dashboard Simpanan</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
   <style>
-    :root {
-      --bg-light: #f4f4f4;
-      --bg-dark: #1e1e1e;
-      --text-light: #333;
-      --text-dark: #f9f9f9;
-      --primary: #4f46e5;
-      --card-bg: #ffffff;
-      --card-dark-bg: #2c2c2c;
-    }
-
+    * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
     body {
-      font-family: 'Poppins', sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: var(--bg-light);
-      color: var(--text-light);
-      transition: all 0.3s ease;
+      margin: 0; padding: 0;
+      background: #0f0f0f; color: #fff;
+      display: flex; justify-content: center; align-items: center;
+      height: 100vh;
+      flex-direction: column;
     }
-
-    body.dark {
-      background-color: var(--bg-dark);
-      color: var(--text-dark);
-    }
-
     .container {
-      max-width: 500px;
-      margin: 60px auto;
-      background: var(--card-bg);
-      padding: 30px;
-      border-radius: 16px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-      transition: all 0.3s ease;
+      width: 90%; max-width: 500px;
+      background: #1c1c1c;
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(255,255,255,0.1);
     }
-
-    body.dark .container {
-      background: var(--card-dark-bg);
+    h2 { margin-bottom: 1rem; text-align: center; }
+    input, button, textarea {
+      width: 100%; padding: 0.75rem;
+      margin: 0.5rem 0;
+      border: none; border-radius: 12px;
+      background: #2d2d2d; color: white;
+      font-size: 1rem;
     }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 20px;
-      font-weight: 600;
-    }
-
-    label {
-      display: block;
-      margin-top: 15px;
-      font-weight: 500;
-    }
-
-    input, textarea {
-      width: 100%;
-      padding: 12px;
-      margin-top: 6px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      background: #fff;
-      transition: 0.3s;
-      font-size: 15px;
-    }
-
-    body.dark input,
-    body.dark textarea {
-      background: #333;
-      color: white;
-      border-color: #555;
-    }
-
-    input:focus,
-    textarea:focus {
-      border-color: var(--primary);
-      outline: none;
-    }
-
     button {
-      margin-top: 25px;
-      width: 100%;
-      padding: 12px;
-      background-color: var(--primary);
-      border: none;
-      color: white;
-      border-radius: 10px;
-      font-weight: 600;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background 0.3s ease;
+      background: #ffffff; color: black;
+      font-weight: bold; cursor: pointer;
+      transition: 0.3s;
     }
-
     button:hover {
-      background-color: #3730a3;
+      background: #00ffe0;
+      transform: scale(1.02);
     }
-
-    .theme-toggle {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      cursor: pointer;
-      font-size: 14px;
-      background: #e0e0e0;
-      padding: 8px 14px;
-      border-radius: 8px;
+    .dashboard {
+      display: none;
+      flex-direction: column;
+      gap: 1rem;
     }
-
-    body.dark .theme-toggle {
-      background: #444;
-      color: white;
+    .file-display {
+      white-space: pre-wrap;
+      background: #292929;
+      padding: 1rem;
+      border-radius: 10px;
+      margin-top: 0.5rem;
+      color: #d2ffd2;
+    }
+    .admin-panel {
+      background: #111;
+      padding: 1rem;
+      border-radius: 10px;
+      margin-top: 2rem;
+    }
+    .button-wrapper {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 1rem;
     }
   </style>
 </head>
 <body>
-  <div class="theme-toggle" onclick="toggleTheme()">🌓 Ganti Tema</div>
 
-  <div class="container">
-    <h2>Formulir Data Pribadi</h2>
-    <form onsubmit="event.preventDefault(); saveData();">
-      <label>Nama Lengkap</label>
-      <input type="text" id="nama" required />
+  <div class="container" id="login-page">
+    <h2>Login User</h2>
+    <input type="text" id="username" placeholder="Masukkan Username" />
+    <button onclick="loginUser()">Masuk</button>
+  </div>
 
-      <label>Email</label>
-      <input type="email" id="email" required />
+  <div class="container dashboard" id="dashboard">
+    <h2>Selamat datang, <span id="user-greet"></span> 👋</h2>
+    
+    <div class="button-wrapper" id="button-list">
+      <!-- Tombol simpanan akan muncul di sini -->
+    </div>
 
-      <label>No. Telepon</label>
-      <input type="tel" id="telepon" />
+    <div class="file-display" id="file-content" style="display:none;"></div>
 
-      <label>Alamat</label>
-      <textarea rows="3" id="alamat"></textarea>
+    <div class="admin-panel">
+      <h3>Login Admin</h3>
+      <input type="password" id="admin-pass" placeholder="Password Admin"/>
+      <button onclick="adminLogin()">Login Admin</button>
 
-      <button type="submit">💾 Simpan Data</button>
-    </form>
+      <div id="admin-controls" style="display:none;">
+        <h4>Tambah/Edit Simpanan</h4>
+        <input type="text" id="new-button-name" placeholder="Nama Button"/>
+        <textarea id="new-file-content" placeholder="Isi Simpanan (teks)"></textarea>
+        <button onclick="addNewSimpanan()">Simpan / Tambahkan</button>
+      </div>
+    </div>
   </div>
 
   <script>
-    const toggleTheme = () => {
-      document.body.classList.toggle('dark');
-      localStorage.setItem('theme', document.body.classList.contains('dark') ? 'dark' : 'light');
-    };
+    const defaultButtons = [
+      { name: "Simpanan A", content: "Isi Simpanan A dari Owner" },
+      { name: "Simpanan B", content: "Isi Simpanan B dari Owner" },
+      { name: "Simpanan C", content: "Isi Simpanan C dari Owner" }
+    ];
 
-    const saveData = () => {
-      const data = {
-        nama: document.getElementById('nama').value,
-        email: document.getElementById('email').value,
-        telepon: document.getElementById('telepon').value,
-        alamat: document.getElementById('alamat').value,
-      };
-      localStorage.setItem('dataPribadi', JSON.stringify(data));
-      alert('✅ Data berhasil disimpan!');
-    };
+    const adminPassword = "admin123"; // Ganti password admin di sini
 
-    // Load theme on start
-    if (localStorage.getItem('theme') === 'dark') {
-      document.body.classList.add('dark');
+    function loginUser() {
+      const uname = document.getElementById("username").value.trim();
+      if (!uname) return alert("Masukkan Username!");
+      localStorage.setItem("username", uname);
+      showDashboard();
     }
+
+    function showDashboard() {
+      document.getElementById("login-page").style.display = "none";
+      document.getElementById("dashboard").style.display = "flex";
+      document.getElementById("user-greet").textContent = localStorage.getItem("username");
+
+      let buttons = JSON.parse(localStorage.getItem("simpananButtons")) || defaultButtons;
+      const btnList = document.getElementById("button-list");
+      btnList.innerHTML = "";
+
+      buttons.forEach((btn, index) => {
+        const b = document.createElement("button");
+        b.textContent = btn.name;
+        b.onclick = () => showFile(btn.content);
+        btnList.appendChild(b);
+      });
+    }
+
+    function showFile(content) {
+      const box = document.getElementById("file-content");
+      box.style.display = "block";
+      box.textContent = content;
+    }
+
+    function adminLogin() {
+      const inputPass = document.getElementById("admin-pass").value;
+      if (inputPass === adminPassword) {
+        document.getElementById("admin-controls").style.display = "block";
+        alert("Admin berhasil login!");
+      } else {
+        alert("Password salah!");
+      }
+    }
+
+    function addNewSimpanan() {
+      const name = document.getElementById("new-button-name").value.trim();
+      const content = document.getElementById("new-file-content").value.trim();
+      if (!name || !content) return alert("Isi semua field!");
+
+      let buttons = JSON.parse(localStorage.getItem("simpananButtons")) || defaultButtons;
+      const existing = buttons.find(b => b.name === name);
+      if (existing) {
+        existing.content = content; // update
+      } else {
+        buttons.push({ name, content });
+      }
+      localStorage.setItem("simpananButtons", JSON.stringify(buttons));
+      alert("Simpanan disimpan!");
+      showDashboard(); // refresh tampilan
+    }
+
+    // Auto-login jika sudah simpan username
+    window.onload = () => {
+      if (localStorage.getItem("username")) showDashboard();
+    };
   </script>
+
 </body>
 </html>
