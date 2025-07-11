@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel - Hanzyy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"/>
+  <style>
+    * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+    body {
+      margin: 0;
+      background: #0f0f0f;
+      color: #fff;
+      overflow: hidden;
+    }
+    canvas {
+      position: fixed;
+      top: 0; left: 0;
+      z-index: -1;
+    }
+    .container {
+      width: 90%; max-width: 600px;
+      margin: 5% auto;
+      background: #1e1e1e;
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(255,255,255,0.1);
+      animation: fadeIn 0.8s ease-in-out;
+    }
+    h2, h3 {
+      text-align: center;
+    }
+    input, textarea, button {
+      width: 100%;
+      margin: 0.5rem 0;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      background: #2d2d2d;
+      color: white;
+    }
+    button {
+      background: #fff;
+      color: #000;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #00ffe0;
+      transform: scale(1.02);
+    }
+    .simpanan-item {
+      background: #222;
+      padding: 1rem;
+      border-radius: 12px;
+      margin-top: 1rem;
+    }
+    .simpanan-item h4 {
+      margin: 0 0 0.5rem;
+    }
+    .actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="particle-canvas"></canvas>
+
+<div class="container" id="admin-container" style="display:none;">
+  <h2>🛠️ Admin Panel</h2>
+
+  <div>
+    <h3>➕ Tambah / Edit Simpanan</h3>
+    <input type="text" id="name" placeholder="Nama Simpanan">
+    <textarea id="content" placeholder="Isi Simpanan"></textarea>
+    <input type="password" id="pin" placeholder="PIN (Opsional)">
+    <button onclick="saveSimpanan()">Simpan</button>
+  </div>
+
+  <hr style="margin:2rem 0; border: none; border-top: 1px solid #444"/>
+
+  <h3>📦 Daftar Simpanan</h3>
+  <div id="list"></div>
+</div>
+
+<audio id="clickSound" src="https://www.myinstants.com/media/sounds/mouse-click.mp3"></audio>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.24.0/firebase-database-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCWxa6RRAC9n2X42Bdd901gAkeRYPCeVac",
+  authDomain: "simpananhanzyy.firebaseapp.com",
+  databaseURL: "https://simpananhanzyy-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "simpananhanzyy",
+  storageBucket: "simpananhanzyy.firebasestorage.app",
+  messagingSenderId: "1097816809849",
+  appId: "1:1097816809849:web:dbca6705e7a35c08f1cfa8",
+  measurementId: "G-23SQDWGSDH"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+const simpananRef = db.ref("simpanan");
+let editingKey = null;
+
+function cekSession() {
+  const admin = sessionStorage.getItem("admin");
+  if (admin === "true") {
+    document.getElementById("admin-container").style.display = "block";
+    loadData();
+  } else {
+    alert("❌ Akses hanya untuk admin!");
+    window.location.href = "index.html";
+  }
+}
+
+function loadData() {
+  simpananRef.once("value", snap => {
+    const data = snap.val() || {};
+    const list = document.getElementById("list");
+    list.innerHTML = "";
+    Object.entries(data).forEach(([key, val]) => {
+      const box = document.createElement("div");
+      box.className = "simpanan-item";
+      box.innerHTML = `
+        <h4>${val.name}</h4>
+        <pre>${val.content}</pre>
+        <div class="actions">
+          <button onclick="editSimpanan('${key}', ${JSON.stringify(val).replace(/"/g, '&quot;')})">✏️ Edit</button>
+          <button onclick="deleteSimpanan('${key}')">🗑️ Hapus</button>
+        </div>
+      `;
+      list.appendChild(box);
+    });
+  });
+}
+
+function saveSimpanan() {
+  const name = document.getElementById("name").value.trim();
+  const content = document.getElementById("content").value.trim();
+  const pin = document.getElementById("pin").value.trim();
+  if (!name || !content) return alert("⚠️ Nama dan Isi wajib diisi!");
+
+  const key = editingKey || name.replace(/\s+/g, "_");
+  simpananRef.child(key).set({ name, content, pin });
+  alert("✅ Simpanan disimpan!");
+  document.getElementById("name").value = "";
+  document.getElementById("content").value = "";
+  document.getElementById("pin").value = "";
+  editingKey = null;
+  loadData();
+}
+
+function editSimpanan(key, val) {
+  document.getElementById("name").value = val.name;
+  document.getElementById("content").value = val.content;
+  document.getElementById("pin").value = val.pin || "";
+  editingKey = key;
+}
+
+function deleteSimpanan(key) {
+  if (!confirm("Yakin hapus simpanan ini?")) return;
+  simpananRef.child(key).remove();
+  loadData();
+}
+
+window.onload = cekSession;
+
+// Partikel
+const canvas = document.getElementById("particle-canvas");
+const ctx = canvas.getContext("2d");
+let particles = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
+
+function createParticles() {
+  for (let i = 0; i < 100; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      size: Math.random() * 2 + 1,
+      speed: Math.random() * 1 + 0.5
+    });
+  }
+}
+createParticles();
+
+function animateParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#ffffff22";
+  particles.forEach(p => {
+    p.y += p.speed;
+    if (p.y > canvas.height) p.y = 0;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+</script>
+</body>
+</html>
