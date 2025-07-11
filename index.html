@@ -8,20 +8,29 @@
   <style>
     * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
     body {
-      margin: 0; padding: 0;
-      background: #0f0f0f; color: #fff;
-      display: flex; justify-content: center; align-items: center;
-      height: 100vh;
-      flex-direction: column;
+      margin: 0;
+      background: #0f0f0f;
+      color: #fff;
+      overflow: hidden;
+    }
+    canvas {
+      position: fixed;
+      top: 0; left: 0;
+      z-index: -1;
     }
     .container {
       width: 90%; max-width: 500px;
-      background: #1c1c1c;
+      margin: 5% auto;
+      background: #1e1e1e;
       padding: 2rem;
       border-radius: 20px;
       box-shadow: 0 0 20px rgba(255,255,255,0.1);
+      animation: fadeIn 1s ease-in-out;
     }
-    h2 { margin-bottom: 1rem; text-align: center; }
+    h2, h3, h4 {
+      margin-bottom: 1rem;
+      text-align: center;
+    }
     input, button, textarea {
       width: 100%; padding: 0.75rem;
       margin: 0.5rem 0;
@@ -38,11 +47,7 @@
       background: #00ffe0;
       transform: scale(1.02);
     }
-    .dashboard {
-      display: none;
-      flex-direction: column;
-      gap: 1rem;
-    }
+    .dashboard { display: none; }
     .file-display {
       white-space: pre-wrap;
       background: #292929;
@@ -63,110 +68,221 @@
       gap: 1rem;
       margin-top: 1rem;
     }
+    .btn-item {
+      position: relative;
+    }
+    .btn-delete {
+      position: absolute;
+      top: 5px;
+      right: 10px;
+      background: red;
+      border-radius: 50%;
+      color: white;
+      font-size: 0.8rem;
+      width: 24px;
+      height: 24px;
+      border: none;
+      display: none;
+    }
+    .btn-item:hover .btn-delete {
+      display: block;
+    }
+    #loader {
+      position: fixed;
+      width: 100%; height: 100%;
+      background: #000;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2rem;
+      z-index: 99;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 <body>
 
-  <div class="container" id="login-page">
-    <h2>Login User</h2>
-    <input type="text" id="username" placeholder="Masukkan Username" />
-    <button onclick="loginUser()">Masuk</button>
-  </div>
+<canvas id="particle-canvas"></canvas>
 
-  <div class="container dashboard" id="dashboard">
-    <h2>Selamat datang, <span id="user-greet"></span> 👋</h2>
-    
-    <div class="button-wrapper" id="button-list">
-      <!-- Tombol simpanan akan muncul di sini -->
+<div id="loader">Memuat...</div>
+
+<div class="container" id="login-page">
+  <h2>Login User</h2>
+  <input type="text" id="username" placeholder="Masukkan Username" />
+  <button onclick="loginUser()">Masuk</button>
+</div>
+
+<div class="container dashboard" id="dashboard">
+  <h2>Selamat datang, <span id="user-greet"></span> 👋</h2>
+  
+  <div class="button-wrapper" id="button-list"></div>
+
+  <div class="file-display" id="file-content" style="display:none;"></div>
+
+  <div class="admin-panel">
+    <h3>Login Admin</h3>
+    <input type="password" id="admin-pass" placeholder="Password Admin"/>
+    <button onclick="adminLogin()">Login Admin</button>
+
+    <div id="admin-controls" style="display:none;">
+      <h4>Tambah/Edit Simpanan</h4>
+      <input type="text" id="new-button-name" placeholder="Nama Button"/>
+      <textarea id="new-file-content" placeholder="Isi Simpanan (teks)"></textarea>
+      <button onclick="addNewSimpanan()">Simpan / Tambahkan</button>
     </div>
-
-    <div class="file-display" id="file-content" style="display:none;"></div>
-
-    <div class="admin-panel">
-      <h3>Login Admin</h3>
-      <input type="password" id="admin-pass" placeholder="Password Admin"/>
-      <button onclick="adminLogin()">Login Admin</button>
-
-      <div id="admin-controls" style="display:none;">
-        <h4>Tambah/Edit Simpanan</h4>
-        <input type="text" id="new-button-name" placeholder="Nama Button"/>
-        <textarea id="new-file-content" placeholder="Isi Simpanan (teks)"></textarea>
-        <button onclick="addNewSimpanan()">Simpan / Tambahkan</button>
-      </div>
-    </div>
   </div>
+</div>
 
-  <script>
-    const defaultButtons = [
-      { name: "Simpanan A", content: "Isi Simpanan A dari Owner" },
-      { name: "Simpanan B", content: "Isi Simpanan B dari Owner" },
-      { name: "Simpanan C", content: "Isi Simpanan C dari Owner" }
-    ];
+<audio id="clickSound" src="https://www.myinstants.com/media/sounds/mouse-click.mp3"></audio>
+<audio id="welcomeSound" src="https://www.myinstants.com/media/sounds/startup-sound.mp3" autoplay></audio>
 
-    const adminPassword = "admin123"; // Ganti password admin di sini
+<script>
+const defaultButtons = [
+  { name: "Simpanan A", content: "Isi Simpanan A dari Owner" },
+  { name: "Simpanan B", content: "Isi Simpanan B dari Owner" },
+  { name: "Simpanan C", content: "Isi Simpanan C dari Owner" }
+];
+const adminPassword = "hanzy";
+let isAdmin = false;
 
-    function loginUser() {
-      const uname = document.getElementById("username").value.trim();
-      if (!uname) return alert("Masukkan Username!");
-      localStorage.setItem("username", uname);
-      showDashboard();
-    }
+function loginUser() {
+  const uname = document.getElementById("username").value.trim();
+  if (!uname) return alert("Masukkan Username!");
+  localStorage.setItem("username", uname);
+  showLoader();
+  setTimeout(showDashboard, 1200);
+}
 
-    function showDashboard() {
-      document.getElementById("login-page").style.display = "none";
-      document.getElementById("dashboard").style.display = "flex";
-      document.getElementById("user-greet").textContent = localStorage.getItem("username");
+function showLoader() {
+  document.getElementById("loader").style.display = "flex";
+}
 
-      let buttons = JSON.parse(localStorage.getItem("simpananButtons")) || defaultButtons;
-      const btnList = document.getElementById("button-list");
-      btnList.innerHTML = "";
+function showDashboard() {
+  document.getElementById("loader").style.display = "none";
+  document.getElementById("login-page").style.display = "none";
+  document.getElementById("dashboard").style.display = "block";
+  document.getElementById("user-greet").textContent = localStorage.getItem("username");
 
-      buttons.forEach((btn, index) => {
-        const b = document.createElement("button");
-        b.textContent = btn.name;
-        b.onclick = () => showFile(btn.content);
-        btnList.appendChild(b);
-      });
-    }
+  let buttons = JSON.parse(localStorage.getItem("simpananButtons")) || defaultButtons;
+  const btnList = document.getElementById("button-list");
+  btnList.innerHTML = "";
 
-    function showFile(content) {
-      const box = document.getElementById("file-content");
-      box.style.display = "block";
-      box.textContent = content;
-    }
+  buttons.forEach((btn, index) => {
+    const wrap = document.createElement("div");
+    wrap.className = "btn-item";
 
-    function adminLogin() {
-      const inputPass = document.getElementById("admin-pass").value;
-      if (inputPass === adminPassword) {
-        document.getElementById("admin-controls").style.display = "block";
-        alert("Admin berhasil login!");
-      } else {
-        alert("Password salah!");
-      }
-    }
-
-    function addNewSimpanan() {
-      const name = document.getElementById("new-button-name").value.trim();
-      const content = document.getElementById("new-file-content").value.trim();
-      if (!name || !content) return alert("Isi semua field!");
-
-      let buttons = JSON.parse(localStorage.getItem("simpananButtons")) || defaultButtons;
-      const existing = buttons.find(b => b.name === name);
-      if (existing) {
-        existing.content = content; // update
-      } else {
-        buttons.push({ name, content });
-      }
-      localStorage.setItem("simpananButtons", JSON.stringify(buttons));
-      alert("Simpanan disimpan!");
-      showDashboard(); // refresh tampilan
-    }
-
-    // Auto-login jika sudah simpan username
-    window.onload = () => {
-      if (localStorage.getItem("username")) showDashboard();
+    const b = document.createElement("button");
+    b.textContent = btn.name;
+    b.onclick = () => {
+      document.getElementById("clickSound").play();
+      showFile(btn.content);
     };
-  </script>
+    wrap.appendChild(b);
+
+    if (isAdmin) {
+      const del = document.createElement("button");
+      del.textContent = "×";
+      del.className = "btn-delete";
+      del.onclick = () => deleteSimpanan(index);
+      wrap.appendChild(del);
+    }
+
+    btnList.appendChild(wrap);
+  });
+}
+
+function showFile(content) {
+  const box = document.getElementById("file-content");
+  box.style.display = "block";
+  box.textContent = content;
+}
+
+function adminLogin() {
+  const inputPass = document.getElementById("admin-pass").value;
+  if (inputPass === adminPassword) {
+    isAdmin = true;
+    sessionStorage.setItem("admin", "true");
+    document.getElementById("admin-controls").style.display = "block";
+    alert("Admin berhasil login!");
+    showDashboard();
+  } else {
+    alert("Password salah!");
+  }
+}
+
+function addNewSimpanan() {
+  const name = document.getElementById("new-button-name").value.trim();
+  const content = document.getElementById("new-file-content").value.trim();
+  if (!name || !content) return alert("Isi semua field!");
+
+  let buttons = JSON.parse(localStorage.getItem("simpananButtons")) || defaultButtons;
+  const existing = buttons.find(b => b.name === name);
+  if (existing) existing.content = content;
+  else buttons.push({ name, content });
+
+  localStorage.setItem("simpananButtons", JSON.stringify(buttons));
+  alert("Simpanan disimpan!");
+  showDashboard();
+}
+
+function deleteSimpanan(index) {
+  if (!confirm("Yakin hapus simpanan ini?")) return;
+  let buttons = JSON.parse(localStorage.getItem("simpananButtons")) || defaultButtons;
+  buttons.splice(index, 1);
+  localStorage.setItem("simpananButtons", JSON.stringify(buttons));
+  showDashboard();
+}
+
+// Auto login user/admin session
+window.onload = () => {
+  if (localStorage.getItem("username")) {
+    if (sessionStorage.getItem("admin") === "true") isAdmin = true;
+    showDashboard();
+  }
+};
+
+// Background Partikel
+const canvas = document.getElementById("particle-canvas");
+const ctx = canvas.getContext("2d");
+let particles = [];
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
+
+function createParticles() {
+  for (let i = 0; i < 100; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      size: Math.random() * 2 + 1,
+      speed: Math.random() * 1 + 0.5
+    });
+  }
+}
+createParticles();
+
+function animateParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = "#ffffff22";
+  particles.forEach(p => {
+    p.y += p.speed;
+    if (p.y > canvas.height) p.y = 0;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+  });
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+</script>
 
 </body>
 </html>
